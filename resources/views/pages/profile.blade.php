@@ -12,6 +12,20 @@
         </div>
     </div>
 </div>
+
+<div class="container">
+   @if (session('success'))
+      <div class="alert alert-success" role="alert">
+         {!! session('success') !!}
+      </div>
+   @endif
+   @if (session('error'))
+      <div class="alert alert-danger" role="alert">
+         {!! session('error') !!}
+      </div>
+   @endif
+
+</div>
 <!-- Page body -->
 <div class="page-body">
     <div class="container-xl">
@@ -32,8 +46,11 @@
                         <h2 class="mb-4">My Account</h2>
                         <h3 class="card-title">Profile Details</h3>
                         <div class="row align-items-center">
-                            <div class="col-auto"><span class="avatar avatar-xl"
-                                    style="background-image: url(./static/avatars/000m.jpg)"></span>
+                            <div class="col-auto">
+
+                              <span class="avatar avatar-xl"
+                                    style="background-image: url({{ asset('photo/'.$user->image,) }})">
+                              </span>
                             </div>
                             <div class="col-auto">
                                 <button class="btn" onclick="pickImage()">
@@ -47,49 +64,67 @@
                             </div>
                         </div>
 
-                        <form action="" method="post">
+                        <form action="{{ route('changePhoto') }}" id="form-photo" method="post" enctype="multipart/form-data">
                             @csrf
-
+                            <input type="hidden" name="id" value="{{ $user->id }}">
+                            <input onchange="submitPhoto()" class="d-none" type="file" accept="image/png, image/gif, image/jpeg" name="image"
+                                id="photo">
                         </form>
 
+                        <form action="{{ route('update') }}" method="post">
+                            @csrf
 
-                        <div class="row mt-4">
-
-                            <input class="d-none" type="file" accept="image/png, image/gif, image/jpeg" name=""
-                                id="avatar">
-                            <div class="col-sm-6">
-                                <div class="form-label">Fullname <span class="text-danger">*</span></div>
-                                <input type="text" class="form-control" value="Tabler">
+                            <div class="row mt-4">
+                              <input type="hidden" name="id" value="{{ $user->id }}">
+                                <div class="col-sm-6">
+                                    <div class="form-label">Fullname <span class="text-danger">*</span></div>
+                                    <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ $user->name }}">
+                                    @error('name')
+                                       <span class="invalid-feedback">
+                                          {{ $message }}
+                                       </span>
+                                    @enderror
+                                </div>
                             </div>
-                        </div>
-                        <div class="row mt-4">
-                           <div class="col-sm-6">
-                              <div class="form-label">Email <span class="text-danger">*</span></div>
-                              <input type="email" class="form-control" value="paweluna@howstuffworks.com">
-                           </div>
-                        </div>
-                        <div class="row mt-4">
-                           <div class="col-sm-6">
-                              <div class="form-label">New Password</div>
-                              <input type="password" class="form-control">
-                           </div>
-                        </div>
-                        <div class="row mt-4">
-                           <div class="col-sm-6">
-                              <div class="form-label">Password Confirmation</div>
-                              <input type="password" class="form-control">
-                           </div>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent mt-auto">
-                        <div class="btn-list justify-content-end">
-                            <a href="#" class="btn">
-                                Cancel
-                            </a>
-                            <a href="#" class="btn btn-primary">
-                                Submit
-                            </a>
-                        </div>
+                            <div class="row mt-4">
+                                <div class="col-sm-6">
+                                    <div class="form-label">Email <span class="text-danger">*</span></div>
+                                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ $user->email }}">
+                                    @error('email')
+                                       <span class="invalid-feedback">
+                                          {{ $message }}
+                                       </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-sm-6">
+                                    <div class="form-label">New Password</div>
+                                    <input type="password" name="password" class="form-control @error('password') is-invalid @enderror">
+                                    @error('password')
+                                       <span class="invalid-feedback">
+                                          {{ $message }}
+                                       </span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-sm-6">
+                                    <div class="form-label">Password Confirmation</div>
+                                    <input type="password" name="password_confirmation" class="form-control">
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent mt-auto">
+                                <div class="btn-list justify-content-end">
+                                    <a href="#" class="btn">
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        Submit
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -99,9 +134,14 @@
 @endsection
 @section('scripts')
 <script>
+   const input = document.getElementById("photo")
     const pickImage = () => {
-        const input = document.getElementById("avatar")
         input.click()
+    }
+
+    const submitPhoto = () =>{
+      const form = document.getElementById('form-photo')
+      form.submit()
     }
 
 </script>

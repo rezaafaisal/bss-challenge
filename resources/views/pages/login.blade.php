@@ -3,13 +3,35 @@
 <div class="text-center mb-4">
     <a href="." class="navbar-brand navbar-brand-autodark"><img src="./static/logo.svg" height="36" alt=""></a>
 </div>
+@if (session('success'))
+   <div class="alert alert-success" role="alert">
+      {!! session('success') !!}
+   </div>
+@endif
+@if (session('error'))
+   <div class="alert alert-danger" role="alert">
+      {!! session('error') !!}
+   </div>
+@endif
 <div class="card card-md">
     <div class="card-body">
         <h2 class="h2 text-center mb-4">Login to your account</h2>
-        <form action="./" method="get" autocomplete="off" novalidate>
+        <form action="{{ route('loggingIn') }}" method="post" autocomplete="off" novalidate>
+         @csrf
             <div class="mb-3">
                 <label class="form-label">Email address</label>
-                <input type="email" class="form-control" placeholder="your@email.com" autocomplete="off">
+                <input 
+                  type="email" 
+                  name="email" 
+                  class="form-control @error('email') is-invalid @enderror" 
+                  placeholder="your@email.com" 
+                  autocomplete="off"
+               >
+               @error('email')
+                  <span class="invalid-feedback">
+                     {{ $message }}
+                  </span>
+               @enderror
             </div>
             <div class="mb-2">
                 <label class="form-label">
@@ -19,7 +41,12 @@
                     </span>
                 </label>
                 <div class="input-group input-group-flat">
-                    <input type="password" class="form-control" placeholder="Your password" autocomplete="off">
+                    <input
+                     type="password"
+                     name="password"
+                     class="form-control"
+                     placeholder="Your password"
+                     autocomplete="off">
                     <span class="input-group-text">
                         <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
                             <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
